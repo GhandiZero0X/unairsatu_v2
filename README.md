@@ -20,5 +20,5 @@
 1. **Clone repository ini**:
 
    ```bash
-   git clone https://github.com/username/unairsatu_v2.git
+   git clone https://github.com/GhandiZero0X/unairsatu_v2.git
    cd unairsatu_v2
