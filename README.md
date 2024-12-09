@@ -21,4 +21,3 @@
 
    ```bash
    git clone https://github.com/GhandiZero0X/unairsatu_v2.git
-   cd unairsatu_v2
