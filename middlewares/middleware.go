@@ -59,87 +59,68 @@ func AuthMiddleware(c *fiber.Ctx) error {
 }
 
 // Middleware to check role
-func CheckRole(role string) func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Get Authorization header
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				http.Error(w, "Authorization header missing", http.StatusUnauthorized)
-				return
-			}
+func RoleMiddleware(requiredRoleID string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		token := c.Get("Authorization")
+		if token == "" {
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Missing token"})
+		}
 
-			// Decode token (assuming it's base64-encoded JSON)
-			parts := strings.Split(authHeader, " ")
-			if len(parts) != 2 || parts[0] != "Bearer" {
-				http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
-				return
-			}
-			token := parts[1]
-			data, err := base64.StdEncoding.DecodeString(token)
-			if err != nil {
-				http.Error(w, "Failed to decode token", http.StatusUnauthorized)
-				return
-			}
+		secret := "your_secret_key"
+		payload, valid := VerifyJWT(token, secret)
+		if !valid {
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token"})
+		}
 
-			// Parse token data
-			var payload map[string]interface{}
-			err = json.Unmarshal(data, &payload)
-			if err != nil {
-				http.Error(w, "Failed to parse token", http.StatusUnauthorized)
-				return
-			}
+		// Periksa apakah ID Role cocok
+		idRole, ok := payload["id_role"].(string)
+		if !ok || idRole != requiredRoleID {
+			return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": "Unauthorized role"})
+		}
 
-			// Check role
-			if payload["role"] != role {
-				http.Error(w, "Unauthorized role", http.StatusForbidden)
-				return
-			}
-
-			next.ServeHTTP(w, r)
-		})
+		return c.Next()
 	}
 }
 
 // Middleware to check jenis_user
-func CheckJenisUser(ju string) func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Get Authorization header
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				http.Error(w, "Authorization header missing", http.StatusUnauthorized)
-				return
-			}
+// func CheckJenisUser(ju string) func(http.Handler) http.Handler {
+// 	return func(next http.Handler) http.Handler {
+// 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 			// Get Authorization header
+// 			authHeader := r.Header.Get("Authorization")
+// 			if authHeader == "" {
+// 				http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+// 				return
+// 			}
 
-			// Decode token (assuming it's base64-encoded JSON)
-			parts := strings.Split(authHeader, " ")
-			if len(parts) != 2 || parts[0] != "Bearer" {
-				http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
-				return
-			}
-			token := parts[1]
-			data, err := base64.StdEncoding.DecodeString(token)
-			if err != nil {
-				http.Error(w, "Failed to decode token", http.StatusUnauthorized)
-				return
-			}
+// 			// Decode token (assuming it's base64-encoded JSON)
+// 			parts := strings.Split(authHeader, " ")
+// 			if len(parts) != 2 || parts[0] != "Bearer" {
+// 				http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+// 				return
+// 			}
+// 			token := parts[1]
+// 			data, err := base64.StdEncoding.DecodeString(token)
+// 			if err != nil {
+// 				http.Error(w, "Failed to decode token", http.StatusUnauthorized)
+// 				return
+// 			}
 
-			// Parse token data
-			var payload map[string]interface{}
-			err = json.Unmarshal(data, &payload)
-			if err != nil {
-				http.Error(w, "Failed to parse token", http.StatusUnauthorized)
-				return
-			}
+// 			// Parse token data
+// 			var payload map[string]interface{}
+// 			err = json.Unmarshal(data, &payload)
+// 			if err != nil {
+// 				http.Error(w, "Failed to parse token", http.StatusUnauthorized)
+// 				return
+// 			}
 
-			// Check jenis_user
-			if payload["jenis_user"] != ju {
-				http.Error(w, "Unauthorized jenis_user", http.StatusForbidden)
-				return
-			}
+// 			// Check jenis_user
+// 			if payload["jenis_user"] != ju {
+// 				http.Error(w, "Unauthorized jenis_user", http.StatusForbidden)
+// 				return
+// 			}
 
-			next.ServeHTTP(w, r)
-		})
-	}
-}
+// 			next.ServeHTTP(w, r)
+// 		})
+// 	}
+// }

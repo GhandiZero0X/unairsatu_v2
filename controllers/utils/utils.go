@@ -35,7 +35,7 @@ func CreateSignature(header, payload, secret string) string {
 }
 
 // Fungsi untuk generate token JWT
-func GenerateJWT(username string) (string, error) {
+func GenerateJWT(username, role string, idRole string) (string, error) {
 	// Header
 	header := map[string]string{"alg": "HS256", "typ": "JWT"}
 	headerJSON, _ := json.Marshal(header)
@@ -44,16 +44,18 @@ func GenerateJWT(username string) (string, error) {
 	// Payload
 	payload := map[string]interface{}{
 		"username": username,
-		"exp":      time.Now().Add(time.Hour * 1).Unix(), // Expiry 1 jam
+		"role":     role,
+		"id_role":  idRole, // Tambahkan id_role ke payload
+		"exp":      time.Now().Add(time.Hour * 1).Unix(),
 	}
 	payloadJSON, _ := json.Marshal(payload)
 	payloadEncoded := base64Encode(payloadJSON)
 
 	// Signature
-	secret := "your_secret_key" // Ganti dengan secret key yang aman
+	secret := "your_secret_key"
 	signature := CreateSignature(headerEncoded, payloadEncoded, secret)
 
-	// Token JWT (Header.Payload.Signature)
+	// Token JWT
 	token := fmt.Sprintf("%s.%s.%s", headerEncoded, payloadEncoded, signature)
 	return token, nil
 }

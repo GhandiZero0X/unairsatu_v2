@@ -14,6 +14,7 @@ type Moduls struct {
 
 type User struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	RoleID		  primitive.ObjectID `json:"id_role" bson:"id_role"`
 	Username      string             `json:"username" bson:"username"`
 	Nm_user       string             `json:"nm_user" bson:"nm_user"`
 	Pass          string             `json:"pass" bson:"pass"`

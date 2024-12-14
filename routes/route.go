@@ -2,7 +2,7 @@ package routes
 
 import (
 	"project-crud_baru/controllers"
-	// middleware "project-crud_baru/middlewares" // Pastikan untuk mengimpor middleware
+	middleware "project-crud_baru/middlewares" // Pastikan untuk mengimpor middleware
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,7 +19,7 @@ func RouteApp(app *fiber.App) {
 	// login
 	Users.Post("/login", controllers.Login)
 	// middlewar
-	// Users.Use(middleware.AuthMiddleware)
+	Users.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
 	Users.Post("/createUser", controllers.CreateUser) // api untuk create user
 	Users.Get("/getAllUser", controllers.GetUsers) // api untuk get all user
 	Users.Get("/getUser/:id", controllers.GetUserOne) // api untuk get user by id
@@ -33,6 +33,7 @@ func RouteApp(app *fiber.App) {
 
 	// Modul routing
 	Modul := app.Group("/modul")
+	Modul.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
 	Modul.Post("/createModul", controllers.CreateModul) // Create a new modul
 	Modul.Get("/getAllModul", controllers.GetAllModul) // Get all moduls
 	Modul.Get("/getModul/:id", controllers.GetModulByID) // Get a modul by ID
@@ -41,6 +42,7 @@ func RouteApp(app *fiber.App) {
 
 	// Jenis_user routing
 	JenisUser := app.Group("/jenis_user")
+	JenisUser.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
 	JenisUser.Get("/getAllJenisUser", controllers.GetAllJenisUser) // Get all jenis user
 	JenisUser.Get("/getJenisUser/:id", controllers.GetJenisUserByID) // Get jenis user by ID
 	JenisUser.Put("/updateTemplates/:id", controllers.UpdateTemplates) // Update templates modul jenis user

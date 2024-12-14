@@ -45,6 +45,13 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 	user.Id_jenis_user = idJenisUser
 
+	// parse role_id from string to ObjectID
+	roleID, err := primitive.ObjectIDFromHex(user.RoleID.Hex())
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid role_id format"})
+	}
+	user.RoleID = roleID
+
 	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Pass), bcrypt.DefaultCost)
 	if err != nil {
@@ -84,6 +91,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	newUser := models.User{
 		ID:            primitive.NewObjectID(),
+		RoleID:        user.RoleID,
 		Username:      user.Username,
 		Nm_user:       user.Nm_user,
 		Pass:          string(hashedPassword),
