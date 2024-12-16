@@ -31,6 +31,15 @@ func RouteApp(app *fiber.App) {
 	Users.Post("/addModul/:id", controllers.AddModulToUser) // api untuk add modul to user
 	Users.Put("/change-jenis-user/:id", controllers.ChangeJenisUserByUserID) // api untuk change jenis user
 
+	// Role routing
+	Role := app.Group("/role")
+	Role.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
+	Role.Post("/createRole", controllers.CreateRole) // Create a new role
+	Role.Get("/getAllRole", controllers.GetRoles) // Get all roles
+	Role.Get("/getRole/:id", controllers.GetRoleByID) // Get a role by ID
+	Role.Put("/updateRole/:id", controllers.UpdateRole) // Update a role by ID
+	Role.Delete("/deleteRole/:id", controllers.DeleteRole) // Delete a role by ID
+
 	// Modul routing
 	Modul := app.Group("/modul")
 	Modul.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
@@ -40,11 +49,22 @@ func RouteApp(app *fiber.App) {
 	Modul.Put("/updateModul/:id", controllers.UpdateModul) // Update a modul by ID
 	Modul.Delete("/deleteModul/:id", controllers.DeleteModul) // Delete a modul by ID
 
+	// Kategori routing
+	Kategori := app.Group("/kategori")
+	Kategori.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
+	Kategori.Post("/createKategori", controllers.CreateKategori) // Create a new kategori
+	Kategori.Get("/getAllKategori", controllers.GetAllKategori) // Get all kategoris
+	Kategori.Get("/getKategori/:id", controllers.GetKategoriByID) // Get a kategori by ID
+	Kategori.Put("/updateKategori/:id", controllers.UpdateKategori) // Update a kategori by ID
+	Kategori.Delete("/deleteKategori/:id", controllers.DeleteKategori) // Delete a kategori by ID
+
 	// Jenis_user routing
 	JenisUser := app.Group("/jenis_user")
 	JenisUser.Use(middleware.AuthMiddleware, middleware.RoleMiddleware("674039236461fc1488d67fec"))
+	JenisUser.Post("/createJenisUser", controllers.CreateJenisUser) // Create a new jenis user
 	JenisUser.Get("/getAllJenisUser", controllers.GetAllJenisUser) // Get all jenis user
 	JenisUser.Get("/getJenisUser/:id", controllers.GetJenisUserByID) // Get jenis user by ID
 	JenisUser.Put("/updateTemplates/:id", controllers.UpdateTemplates) // Update templates modul jenis user
+	JenisUser.Delete("/deleteJenisUser/:id", controllers.DeleteJenisUserByID) // Delete jenis user by ID
 
 }

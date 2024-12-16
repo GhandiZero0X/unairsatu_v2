@@ -15,6 +15,23 @@ import (
 
 var jenisUserCollection *mongo.Collection = config.GetCollection("jenis_user")
 
+// CreateJenisUser baru
+func CreateJenisUser(c *fiber.Ctx) error {
+	jenisUser := new(models.JenisUser)
+
+	if err := c.BodyParser(jenisUser); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	jenisUser.ID = primitive.NewObjectID()
+	_, err := jenisUserCollection.InsertOne(context.Background(), jenisUser)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create JenisUser"})
+	}
+
+	return c.Status(http.StatusCreated).JSON(jenisUser)
+}
+
 // getAll jenis user
 func GetAllJenisUser(c *fiber.Ctx) error {
 	cursor, err := jenisUserCollection.Find(context.Background(), bson.D{})
