@@ -55,7 +55,6 @@ function generateRandomString(length) {
 }
 
 // rubah semua role_aktif pada users menjadi 1
-
 db.getCollection('users').insertOne([
     {
         "id_role": ObjectId('674039236461fc1488d67fec'),

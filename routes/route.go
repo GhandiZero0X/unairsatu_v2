@@ -13,6 +13,7 @@ func RouteApp(app *fiber.App) {
 
 	// User tanpa autentikasi
 	// api.Post("/users/login", controllers.Login) // Pastikan login berada di luar grup yang menggunakan middleware
+	// api.Post("/createUser", controllers.CreateUser) // api untuk create user
 
 	// User routing
 	Users := app.Group("/users")
